@@ -1,0 +1,98 @@
+#include <iostream>
+#include <list>
+
+#include "network.h"
+#include "com.h"
+#include <fstream>
+
+using namespace std;
+
+int main()
+{
+    int nbrNoeud, nbrLink,i,j;
+
+    printf("Veuillez entrez le nombre de nbr de Noeuds : ");
+    scanf("%d", &nbrNoeud);
+    printf("Veuillez entrez le nombre de nbr de liens : ");
+    scanf("%d", &nbrLink);
+
+    Graphe graph(nbrNoeud, nbrLink);
+
+    graph.affiche();
+    cout << "Nous affichons les tables d'acheminement des differents noeuds"<<endl;
+
+    for(i=0;i<nbrNoeud;i++)
+    {
+        graph.nodes[i]->dijkstra(graph.getLinkTable(),nbrNoeud);
+        cout << endl<<endl;
+    }
+
+    //********************************************
+    //********************************************
+    //********************************************
+    //Envoie de message
+    string nom_doss="dossierCom/";
+    string nom_fichier;
+    string f;
+    cout << "Communcation entre les noueds du réseau.\n" << endl;
+    //system("mkdir dossierCom");
+    //DIR *rep = NULL;
+    //rep = opendir("dossierCom"); //closedir(rep) pour fermer
+   /* for(int i=0;i<nbrNoeud;i++)
+    {
+        char *m;
+        m=int_str(i);
+        cout << "affichage du string"<<endl;
+       // printf("%s\n",m);
+
+        string f(m);
+        cout << f<<endl;
+
+        nom_fichier=nom_doss+f+".txt";
+       // string nomFichier(strcat(strcat("dossierCom/",m),".txt"));
+        //cout << strcat(strcat("dossierCom/",m),".txt")<<endl;
+         ofstream ecrire(nom_fichier.c_str());
+    }*/
+    int idenvw,idrecevw;
+    char *s;
+     cout<<"entrer le nom de la machine de envw"<<endl;
+     cin>>idenvw;
+     idenvw--;
+     cout<<"a qui voulez-vous envoyer?"<<endl;
+     cin>>idrecevw;
+     idrecevw--;
+     s=int_str(idrecevw);
+     cout<<s;
+     string si(s);
+     nom_fichier=nom_doss+si+".txt";
+      ofstream ecrire(nom_fichier.c_str());
+      cout <<"entrer votre msg en chiffre"<<endl;
+      string msg;
+     cin >> msg;
+
+     ecrire<<si<<":"<<msg<<endl;
+     cout <<"msg envwye aec succes au noeud "<<idrecevw<<endl;
+
+    /*
+    char fg[100];
+    strcpy(fg,msg.c_str());
+
+    cout <<"La valeur intiere est : " << chr_int(fg)<<endl;
+    */
+
+    cout <<"\n\nRecuperation du message par le noeud "<<idrecevw<<endl;
+
+    ifstream lecture(nom_fichier.c_str());
+     string msgLu;
+
+     lecture>> msgLu;
+     cout <<"dans mon fichier il y avait le msg :\n"<<msgLu<<endl;
+    //***********************
+    //*************************
+    //Fin envoie de msgs
+    cout << "le chemin utilise est :\n";
+    graph.nodes[idenvw]->imprimeChemin(idrecevw);
+
+    cout <<"Temps d'envoie du message : "<<graph.nodes[idenvw]->aTable[idrecevw][1]*100<<"ms"<<endl;
+    return 0;
+}
